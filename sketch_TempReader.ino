@@ -1,7 +1,7 @@
 /*
  * Temperature Monitor Version 1.7
  * Author: matthew.j.graham@gmail.com
- * Build Date: 14 Feb 2017
+ * Build Date: 30 May 2018
  *  ---------------------------------------------------------------------------------------------------
  * Changes:  
  *  Removed statusPIN (builtinLED) - lines are commented out for now.
@@ -203,6 +203,7 @@ bool factoryReset()
   SessionLowTemp = 255.0;
   delay(3000);
   allOff();
+  ss.loadAnimation();
   return true;
 }
 
@@ -216,9 +217,9 @@ void printBanner()
   Serial.println(" -------------------------------------------------");
   Serial.println("   Graham Engineering, LLC - TempMon Version 1.7");
   Serial.println(" -------------------------------------------------");
-  Serial.println("     Build Date: 14 Feb 2017");
+  Serial.println("     Build Date: 01 June 2018");
   Serial.println("     Author: matthew.j.graham@gmail.com");
-  Serial.println("     All Rights Reserved 2017");
+  Serial.println("     All Rights Reserved 2017-2018");
   Serial.println(" -------------------------------------------------");
   Serial.println("     Current Temp: " + String(CurrentTemp));
   Serial.println("     High Temp Limit: " + String(high_limit) + "F");
@@ -244,6 +245,7 @@ void setup(void)
   Wire.onRequest(sendData);           // When data is requested to be sent, it will be sent via the "sendData" function
   CurrentTemp = sensors.getTempFByIndex(0);
   printBanner();
+  ss.loadAnimation();
 }
 
 void loop()
@@ -406,6 +408,12 @@ void receiveData(int byteCount)
     case 0:
     {
       // Sometimes a zero is sent in as well.  Ignore it.
+      break;
+    }
+    case 42:
+    {
+      i2cResponse = 42;
+      Serial.println("You found the secret number");
       break;
     }
     case 70:
